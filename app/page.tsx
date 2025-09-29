@@ -1,6 +1,5 @@
-export default function Home() {
-  return (
-    <h1>Mulch This Trim That — App is Connected!</h1>
-  );
-}
+import { redirect } from "next/navigation";
 
+export default function Home() {
+  redirect("/clients");
+}
