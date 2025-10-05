@@ -1,34 +1,29 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Mulch This Trim That",
-  description: "Estimate and Client Manager",
+  description: "Client management app for Mulch This Trim That",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body style={{ margin: 0, fontFamily: "Arial, sans-serif" }}>
+        {/* Global Navigation */}
+        <header style={{ padding: "10px", background: "#f5f5f5", display: "flex", gap: "20px" }}>
+          <a href="/clients" style={{ textDecoration: "none", color: "#0B1D33", fontWeight: "bold" }}>👥 Clients</a>
+          <a href="/calendar" style={{ textDecoration: "none", color: "#0B1D33", fontWeight: "bold" }}>📅 Calendar</a>
+        </header>
+
+        {/* Page Content */}
+        <main>{children}</main>
       </body>
     </html>
   );
 }
+

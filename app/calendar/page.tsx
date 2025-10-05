@@ -8,47 +8,51 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-type Job = {
+type Client = {
   id: string;
-  job_date: string;
-  notes: string | null;
+  name: string;
+  date_scheduled: string | null;
+  services: string | null;
 };
 
 export default function CalendarPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
 
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchClients = async () => {
       const { data, error } = await supabase
-        .from("jobs")
-        .select("id, job_date, notes")
-        .order("job_date", { ascending: true });
+        .from("clients")
+        .select("id, name, date_scheduled, services")
+        .order("date_scheduled", { ascending: true });
 
       if (error) {
-        console.error("Error fetching jobs:", error);
+        console.error("Error fetching clients:", error);
       } else {
-        setJobs(data || []);
+        setClients(data || []);
       }
     };
 
-    fetchJobs();
+    fetchClients();
   }, []);
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
       <h1>📅 Jobs Calendar</h1>
-      <p>This is a simple calendar view of your scheduled jobs.</p>
+      <p>This shows all scheduled jobs from the clients table.</p>
 
-      {jobs.length === 0 ? (
+      {clients.filter(c => c.date_scheduled).length === 0 ? (
         <p>No jobs scheduled yet.</p>
       ) : (
         <ul>
-          {jobs.map((job) => (
-            <li key={job.id}>
-              <strong>{new Date(job.job_date).toDateString()}</strong>
-              {job.notes ? ` — ${job.notes}` : ""}
-            </li>
-          ))}
+          {clients
+            .filter((c) => c.date_scheduled) // only show clients with a scheduled date
+            .map((c) => (
+              <li key={c.id} style={{ marginBottom: "10px" }}>
+                <strong>{new Date(c.date_scheduled!).toDateString()}</strong>
+                {" — "}
+                {c.name} ({c.services || "No service listed"})
+              </li>
+            ))}
         </ul>
       )}
     </div>

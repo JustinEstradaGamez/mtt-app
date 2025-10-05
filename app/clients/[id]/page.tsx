@@ -57,6 +57,18 @@ export default function ClientDetailPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this client? This action cannot be undone.")) {
+      const { error } = await supabase.from("clients").delete().eq("id", id);
+      if (error) {
+        alert("❌ Error deleting client: " + error.message);
+      } else {
+        alert("✅ Client deleted successfully.");
+        router.push("/clients");
+      }
+    }
+  };
+
   const handleChange = (field: string, value: any) => {
     setClient((prev: any) => ({ ...prev, [field]: value }));
   };
@@ -167,7 +179,7 @@ export default function ClientDetailPage() {
       </div>
 
       {/* Completed Checkbox */}
-      <div style={{ marginBottom: "10px" }}>
+      <div style={{ marginBottom: "20px" }}>
         <label style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
           <input
             type="checkbox"
@@ -178,24 +190,34 @@ export default function ClientDetailPage() {
         </label>
       </div>
 
-      <div style={{ marginTop: "20px" }}>
+      {/* Buttons */}
+      <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
         <button
           onClick={handleSave}
-          style={{ ...buttonStyle, background: "#2E8B57", marginRight: "10px" }}
+          style={{ ...buttonStyle, background: "#2E8B57" }}
         >
           Save Changes
         </button>
+
         <button
           onClick={() => router.push("/clients")}
           style={{ ...buttonStyle, background: "#555" }}
         >
           Back to Clients
         </button>
+
         <button
           onClick={() => router.push(`/clients/${id}/quote`)}
-          style={{ ...buttonStyle, background: "#0B1D33", marginLeft: "10px" }}
+          style={{ ...buttonStyle, background: "#0B1D33" }}
         >
           View Quote
+        </button>
+
+        <button
+          onClick={handleDelete}
+          style={{ ...buttonStyle, background: "red" }}
+        >
+          Delete Client
         </button>
       </div>
 
@@ -221,10 +243,11 @@ const textareaStyle = {
 };
 
 const buttonStyle = {
-  padding: "10px 15px",
+  padding: "12px",
   color: "white",
   border: "none",
   borderRadius: "6px",
   cursor: "pointer",
 };
+
 
