@@ -10,16 +10,12 @@ export const metadata: Metadata = {
   description: "Client management app for Mulch This Trim That",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// Navigation bar as a client-only component
+function NavBar() {
   const pathname = usePathname();
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    // Check if user is authed (set after entering password)
     if (typeof window !== "undefined") {
       const ok = localStorage.getItem("mttt-authed");
       if (ok === "true") {
@@ -28,47 +24,55 @@ export default function RootLayout({
     }
   }, []);
 
-  // Don’t show nav bar on quote pages
   const isQuotePage = pathname?.includes("/quote");
 
+  if (!authed || isQuotePage) return null;
+
+  return (
+    <header
+      style={{
+        padding: "10px",
+        background: "#f5f5f5",
+        display: "flex",
+        gap: "20px",
+      }}
+    >
+      <a
+        href="/clients"
+        style={{
+          textDecoration: "none",
+          color: "#0B1D33",
+          fontWeight: "bold",
+        }}
+      >
+        👥 Clients
+      </a>
+      <a
+        href="/calendar"
+        style={{
+          textDecoration: "none",
+          color: "#0B1D33",
+          fontWeight: "bold",
+        }}
+      >
+        📅 Calendar
+      </a>
+    </header>
+  );
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body style={{ margin: 0, fontFamily: "Arial, sans-serif" }}>
-        {/* Only show nav bar if authed AND not on a quote page */}
-        {authed && !isQuotePage && (
-          <header
-            style={{
-              padding: "10px",
-              background: "#f5f5f5",
-              display: "flex",
-              gap: "20px",
-            }}
-          >
-            <a
-              href="/clients"
-              style={{
-                textDecoration: "none",
-                color: "#0B1D33",
-                fontWeight: "bold",
-              }}
-            >
-              👥 Clients
-            </a>
-            <a
-              href="/calendar"
-              style={{
-                textDecoration: "none",
-                color: "#0B1D33",
-                fontWeight: "bold",
-              }}
-            >
-              📅 Calendar
-            </a>
-          </header>
-        )}
-
+        <NavBar />
         <main>{children}</main>
       </body>
     </html>
   );
 }
+
