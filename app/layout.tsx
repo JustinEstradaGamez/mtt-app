@@ -5,10 +5,7 @@ import type { Metadata } from "next";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Mulch This Trim That",
-  description: "Client management app for Mulch This Trim That",
-};
+
 
 // Navigation bar as a client-only component
 function NavBar() {
