@@ -3,6 +3,48 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+// Simple top navigation bar
+const NavBar = () => {
+  return (
+    <nav
+      style={{
+        backgroundColor: "#081D33",
+        color: "white",
+        padding: "10px 20px",
+        marginBottom: "0.5rem",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1000px",
+          margin: "0 auto",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          fontSize: "0.95rem",
+        }}
+      >
+        <div style={{ fontWeight: "bold" }}>Mulch This Trim That</div>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <Link
+            href="/clients"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            Clients
+          </Link>
+          <Link
+            href="/calendar"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            Calendar
+          </Link>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 export default function ClientsPage() {
   const router = useRouter();
@@ -28,11 +70,12 @@ export default function ClientsPage() {
       .from("clients")
       .select("*")
       .order("created_at", { ascending: false });
+
     if (!error && data) setClients(data);
   }
 
   // Handle submit
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: any) {
     e.preventDefault();
 
     const { error } = await supabase.from("clients").insert([
@@ -45,7 +88,7 @@ export default function ClientsPage() {
         price,
         notes,
         // new fields
-        quote_date: new Date().toISOString().split("T")[0], // today’s date
+        created_at: new Date().toISOString().split("T")[0], // today's date
         date_scheduled: null,
         completed: false,
       },
@@ -70,14 +113,17 @@ export default function ClientsPage() {
     <div
       style={{
         fontFamily: "Arial, Helvetica, sans-serif",
-        background: "#F9FAFB",
+        background: "#F9F4FB",
         minHeight: "100vh",
       }}
     >
+      {/* Global nav */}
+      <NavBar />
+
       {/* Header */}
       <header
         style={{
-          background: "#0B1D33",
+          background: "#081D33",
           padding: "20px",
           textAlign: "center",
         }}
@@ -94,20 +140,17 @@ export default function ClientsPage() {
       <div
         style={{
           maxWidth: "700px",
-          margin: "30px auto",
-          background: "white",
+          margin: "0 auto",
           padding: "20px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         }}
       >
-        <h2 style={{ marginBottom: "20px", color: "#0B1D33" }}>Add a Client</h2>
+        <h2 style={{ marginBottom: "20px", color: "#081D33" }}>Add a Client</h2>
+
         <form onSubmit={handleSubmit}>
           <label>Name:</label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
             style={inputStyle}
           />
 
@@ -142,7 +185,11 @@ export default function ClientsPage() {
 
           <label>Price:</label>
           <div
-            style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
           >
             <span style={{ marginRight: "5px" }}>$</span>
             <input
@@ -163,33 +210,43 @@ export default function ClientsPage() {
           <button type="submit" style={buttonStyle}>
             Add Client
           </button>
-        </form>
 
-        {message && <p style={{ marginTop: "15px" }}>{message}</p>}
+          {message && <p style={{ marginTop: "15px" }}>{message}</p>}
+        </form>
       </div>
 
       {/* Client List */}
-      <div style={{ maxWidth: "700px", margin: "0 auto", padding: "20px" }}>
-        <h2 style={{ color: "#0B1D33" }}>Client List</h2>
+      <div
+        style={{
+          maxWidth: "700px",
+          margin: "0 auto",
+          padding: "20px",
+        }}
+      >
+        <h2 style={{ color: "#081D33" }}>Client List</h2>
         <ul>
           {clients.map((c) => (
             <li key={c.id} style={{ marginBottom: "10px" }}>
               <a
                 href={`/clients/${c.id}`}
-                style={{ color: "#2E8B57", marginRight: "10px" }}
+                style={{ color: "#081D33", marginRight: "10px" }}
               >
                 Edit
               </a>
               |
               <a
                 href={`/clients/${c.id}/quote`}
-                style={{ color: "#0B1D33", marginLeft: "10px" }}
+                style={{ color: "#081D33", marginLeft: "10px" }}
               >
                 View Quote
               </a>
               {" — "}
               {c.name} (${c.price}){" "}
-              {c.completed ? "✅ Completed" : c.date_scheduled ? "📅 Scheduled" : ""}
+              {c.completed
+                ? "✅ Completed"
+                : c.date_scheduled
+                ? "📅 Scheduled"
+                : ""}
             </li>
           ))}
         </ul>
@@ -199,7 +256,7 @@ export default function ClientsPage() {
 }
 
 // Reusable styles
-const inputStyle = {
+const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px",
   marginBottom: "10px",
@@ -207,7 +264,7 @@ const inputStyle = {
   borderRadius: "4px",
 };
 
-const textareaStyle = {
+const textareaStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px",
   marginBottom: "10px",
@@ -216,13 +273,13 @@ const textareaStyle = {
   height: "80px",
 };
 
-const buttonStyle = {
+const buttonStyle: React.CSSProperties = {
   width: "100%",
   padding: "12px",
-  background: "#2E8B57",
+  background: "#2EBB57",
   color: "white",
   border: "none",
   borderRadius: "6px",
   fontSize: "1rem",
   cursor: "pointer",
-}; 
+};
